@@ -16,6 +16,7 @@ test("routes only the files verdrift understands", () => {
     ".config/mise/config.toml",
     "package.json",
     "pyproject.toml",
+    "setup.cfg",
     "go.mod",
     "Dockerfile",
     "Dockerfile.dev",
@@ -96,6 +97,18 @@ test("pyproject.toml: requires-python and Poetry python constraints", () => {
     "python range >=3.10,<3.13 @3",
     "python range ^3.10 @6",
   ]);
+});
+
+test("setup.cfg: python_requires in [options]", () => {
+  const text = "[metadata]\npython_requires = >=3.9\n\n[options]\npython_requires = >=3.10\n";
+  assert.deepEqual(summarize(extract("setup.cfg", text).declarations), ["python range >=3.10 @5"]);
+});
+
+test("setup.cfg: missing or unparseable python_requires", () => {
+  assert.deepEqual(extract("setup.cfg", "[metadata]\npython_requires = >=3.9\n").declarations, []);
+  const declaration = extract("setup.cfg", "[options]\npython_requires = any\n").declarations[0];
+  assert.equal(declaration.set, null);
+  assert.match(declaration.skip ?? "", /could not parse/);
 });
 
 test("go.mod: go directive is a minimum, toolchain is a pin", () => {

@@ -235,6 +235,26 @@ function pyprojectToml(c, file, text) {
   }
 }
 
+/** setup.cfg: the Python range in the standard [options] section. @param {Collector} c @param {string} file @param {string} text */
+function setupCfg(c, file, text) {
+  let section = "";
+  for (const [i, rawLine] of text.split(/\r?\n/).entries()) {
+    const sectionMatch = /^\s*\[([^\]]+)\]\s*$/.exec(rawLine);
+    if (sectionMatch) {
+      section = sectionMatch[1].trim().toLowerCase();
+      continue;
+    }
+    if (section !== "options") continue;
+    const valueMatch = /^\s*python_requires\s*=\s*(.*?)\s*$/.exec(rawLine);
+    if (!valueMatch?.[1]) continue;
+    const raw = valueMatch[1];
+    c.add(
+      { runtime: "python", file, line: i + 1, where: "options.python_requires", raw, role: "range" },
+      { set: parsePep440(raw) },
+    );
+  }
+}
+
 /** go.mod: `go 1.22` is the minimum Go version (Go >= 1.21 enforces it); `toolchain go1.22.3` is a pin. */
 /** @param {Collector} c @param {string} file @param {string} text */
 function goMod(c, file, text) {
@@ -464,6 +484,7 @@ export function extractorFor(path) {
   if (/^\.?mise(\.local)?\.toml$/.test(base) || path.endsWith(".config/mise/config.toml")) return miseToml;
   if (base === "package.json") return packageJson;
   if (base === "pyproject.toml") return pyprojectToml;
+  if (base === "setup.cfg") return setupCfg;
   if (base === "go.mod") return goMod;
   if (/^(Dockerfile|Containerfile)(\..+)?$/.test(base) || /\.(Dockerfile|dockerfile)$/.test(base)) {
     // Dockerfile.dev and Dockerfile.prod are Dockerfiles; Dockerfile.ts or Dockerfile.md are not.

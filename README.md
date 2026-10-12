@@ -79,7 +79,7 @@ files. verdrift checks all of them at once.
 | Runtime | Files and fields |
 | --- | --- |
 | Node.js | `.nvmrc`, `.node-version`, `package.json` (`engines.node`, `volta.node`, `devEngines.runtime`), `node:` images |
-| Python | `.python-version`, `runtime.txt`, `pyproject.toml` (`requires-python`, `tool.poetry.dependencies.python`), `python:` images |
+| Python | `.python-version`, `runtime.txt`, `pyproject.toml` (`requires-python`, `tool.poetry.dependencies.python`), `setup.cfg` (`options.python_requires`), `python:` images |
 | Go | `.go-version`, `go.mod` (`go`, `toolchain`), `golang:` images |
 | All | `.tool-versions` (asdf), `mise.toml`, Dockerfiles (`FROM`, including `ARG` defaults), Compose files, GitHub Actions workflows (`actions/setup-node`, `setup-python`, `setup-go`, matrices, job containers), `.gitlab-ci.yml` |
 
