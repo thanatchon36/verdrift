@@ -129,6 +129,18 @@ skipped with the reason, never silently dropped. Named LTS aliases like `lts/iro
 `--format github` turns each problem into a workflow annotation that points at the offending file
 and line. Pin the tag (`#v0.1.0`) so a new release can't change your CI unexpectedly.
 
+## Use from a coding agent
+
+The `runtime-drift` skill in [thanatchon36/skills](https://github.com/thanatchon36/skills) runs
+verdrift v0.1.0 for you, then proposes the smallest set of edits that makes the pins agree. If
+Node 22 or network access isn't available, it falls back to a manual checklist. Install it in
+Claude Code with:
+
+```text
+/plugin marketplace add thanatchon36/skills
+/plugin install thanatchon-skills@thanatchon
+```
+
 ## Options
 
 ```text
